@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "linear/VectorTest.h"
 #include "stack/StackTest.h"
 #include "linked_list/LinkedListTest.h"
 #include "sorting/SortingTest.h"
