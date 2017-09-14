@@ -35,76 +35,89 @@ private:
         resize(optimalCapacity(_capacity, _size));
     }
 public:
-    Vector() {
-        _capacity = 16;
-        _size = 0;
-        _buffer = new T[_capacity];
-    }
+    Vector();
+    Vector(const std::size_t size, const T& value);
+    Vector(const Vector<T>& v);
+    ~Vector();
 
-    Vector(const std::size_t size, const T& value) {
-        _capacity = size;
-        _buffer = new T[_capacity];
-        fill(_buffer, _capacity, value);
-    }
+    inline constexpr const std::size_t size() const                   { return _size; }
+    inline constexpr const T& operator[](const std::size_t pos) const { return _buffer[pos]; }
+    inline T& operator[](const std::size_t pos)                       { return _buffer[pos]; }
 
-    Vector(const Vector<T>& v) {
-        _capacity = v._capacity;
-        _buffer = new T[_capacity];
+    inline constexpr T* begin() const                           { return _buffer; }
+    inline constexpr T* end() const                             { return _buffer + _size; }
 
-        for (int i = 0; i < v._capacity; ++i) {
-            _buffer[i] = v._buffer[i];
-        }
-    }
-
-    ~Vector(){
-        delete[] _buffer;
-    }
-
-    const std::size_t size() const { return _size; }
-
-    void resize(const std::size_t capacity, const T& value = T()) {
-        // allocate new buffer
-        T* const new_buffer = new T[capacity];
-
-        // move old data to new buffer
-        T* iter = _buffer;
-        T* iter_end = _buffer + _capacity;
-        for (int i = 0; i < capacity; ++i) {
-            if (iter != iter_end) {
-                new_buffer[i] = *iter;
-                ++iter;
-            } else {
-                new_buffer[i] = value;
-            }
-        }
-
-        // delete old buffer
-        delete[] _buffer;
-        _buffer = new_buffer;
-        _capacity = capacity;
-    }
-
-    void push_back(const T& value) {
-        // ensureCapacity();
-        if (_size == _capacity) {
-            resize(static_cast<const std::size_t>(_capacity * SCALE_FACTOR));
-        }
-        _buffer[_size++] = value;
-    }
-
-    bool pop_back() {
-        if (_size > 0) {
-            _size--;
-        }
-    }
-
-    inline const T& operator[](const std::size_t pos) const {
-        return _buffer[pos];
-    }
-
-    inline T& operator[](const std::size_t pos) {
-        return _buffer[pos];
-    }
+    void resize(const std::size_t capacity, const T& value);
+    void push_back(const T& value);
+    void pop_back();
 };
+
+template<typename T>
+Vector<T>::Vector() {
+    _capacity = 16;
+    _size = 0;
+    _buffer = new T[_capacity];
+}
+
+template<typename T>
+Vector<T>::Vector(const std::size_t size, const T& value) {
+    _capacity = size;
+    _buffer = new T[_capacity];
+    fill(_buffer, _capacity, value);
+}
+
+template<typename T>
+Vector<T>::Vector(const Vector<T>& v) {
+    _capacity = v._capacity;
+    _buffer = new T[_capacity];
+
+    for (int i = 0; i < v._capacity; ++i) {
+        _buffer[i] = v._buffer[i];
+    }
+}
+
+template<typename T>
+Vector<T>::~Vector(){
+    delete[] _buffer;
+}
+
+template<typename T>
+void Vector<T>::resize(const std::size_t capacity, const T& value = T()) {
+    // allocate new buffer
+    T* const new_buffer = new T[capacity];
+
+    // move old data to new buffer
+    T* iter = _buffer;
+    T* iter_end = _buffer + _capacity;
+    for (int i = 0; i < capacity; ++i) {
+        if (iter != iter_end) {
+            new_buffer[i] = *iter;
+            ++iter;
+        } else {
+            new_buffer[i] = value;
+        }
+    }
+
+    // delete old buffer
+    delete[] _buffer;
+    _buffer = new_buffer;
+    _capacity = capacity;
+}
+
+template<typename T>
+void Vector<T>::push_back(const T& value) {
+    // ensureCapacity();
+    if (_size == _capacity) {
+        resize(static_cast<const std::size_t>(_capacity * SCALE_FACTOR));
+    }
+    _buffer[_size++] = value;
+}
+
+template<typename T>
+void Vector<T>::pop_back() {
+    if (_size > 0) {
+        _size--;
+    }
+}
 
 #endif //ALGORITHMS_VECTOR_H
